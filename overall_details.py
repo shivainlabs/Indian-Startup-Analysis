@@ -85,7 +85,17 @@ def load_overall_analysis(df):
         temp_df = temp1.groupby(["year","startup"])["amount"].sum().sort_values(ascending=False).reset_index()
         final_df = temp_df.drop_duplicates(subset=["year"],keep="first").sort_values(by=["year"]).reset_index().drop("index",axis=1)
         st.dataframe(final_df)
-
+        
+    col1,col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("Top Investors")
+        top_10_investors = df.groupby("investors")['amount'].sum().sort_values(ascending=False).head(9)
+        fig1,ax1 = plt.subplots()
+        ax1.bar(top_10_investors.index,top_10_investors.values)
+        for labels in ax1.get_xticklabels():
+            labels.set_rotation(90)
+        st.pyplot(fig1)
         
         
         
