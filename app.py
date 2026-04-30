@@ -13,6 +13,9 @@ df = pd.read_csv("startup_cleaned.csv")
 df["date"] = pd.to_datetime(df["date"],errors="coerce")
 df["year"] = df["date"].dt.year
 df["month"] = df["date"].dt.month
+df["city"] = df["city"].replace({"Bengaluru":"Bangalore"})
+df["startup"] = df["startup"].replace({"Flipkart.com":"Flipkart"}) #type: ignore
+
 
 
 st.sidebar.title("Startup Funding Analysis")

@@ -14,12 +14,17 @@ def load_investor_details(df,investor):
     with col1:
     
         # biggest investments
-        big_series = df[df["investors"].str.contains(investor)].groupby("startup")["amount"].sum().sort_values(ascending=False).head()
         st.subheader("Biggest Investments")
+        big_series = df[df["investors"].str.contains(investor)].groupby("startup")["amount"].sum().sort_values(ascending=False).head()
+        big_series = big_series[big_series>0]
         
-        fig, ax = plt.subplots()
-        ax.bar(big_series.index,big_series.values) #type: ignore
-        st.pyplot(fig)
+        if not big_series.empty:           
+        
+            fig, ax = plt.subplots()
+            ax.bar(big_series.index,big_series.values) #type: ignore
+            st.pyplot(fig)
+        else:
+            st.warning("No BIGGEST Investment Available")
     
     
     with col2:

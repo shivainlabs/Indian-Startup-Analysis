@@ -40,6 +40,52 @@ def load_overall_analysis(df):
         
     temp_df["x_axis"] = temp_df["month"].astype("str") + "-" + temp_df["year"].astype("str")   
     
-    fig3, ax3 = plt.subplots()
+    fig3, ax3 = plt.subplots(figsize=(8,3))
     ax3.plot(temp_df["x_axis"],temp_df["amount"])
+    ax3.set_xticks(temp_df["x_axis"][::3])
+    for label in ax3.get_xticklabels():
+        label.set_rotation(45)
     st.pyplot(fig3)
+    
+    # Sector-wise Analysis
+    st.subheader("Sector-wise Analysis")
+    col1,col2 = st.columns(2)
+    
+    with col1:
+        st.write("Top Sectors by Investment Amount")
+        top_invested_sector = df.groupby(["vertical"])["amount"].sum().sort_values(ascending=False).head(15)
+        fig1,ax1 = plt.subplots()
+        ax1.pie(top_invested_sector,labels = top_invested_sector.index,autopct="%1.1f%%") #type: ignore
+        st.pyplot(fig1)
+    
+    with col2:
+        st.write("Sector-wise Investment Count (Deal Frequency)")
+        top_invested_sector = df.groupby(["vertical"])["amount"].count().sort_values(ascending=False).head(10)
+        
+        fig1,ax1 = plt.subplots()
+        ax1.bar(top_invested_sector.index,top_invested_sector.values) #type: ignore
+        for label in ax1.get_xticklabels():
+            label.set_rotation(90)
+        st.pyplot(fig1)
+    
+    # City-wise Anaylsis
+    col1,col2 = st.columns(2)
+    with col1:
+        st.subheader("City-wise Anaylsis")
+        city_series = df.groupby("city")["amount"].sum().sort_values(ascending=False).head(10)
+        
+        fig2,ax2 = plt.subplots()
+        ax2.pie(city_series,labels=city_series.index,autopct="%1.1f%%")
+        st.pyplot(fig2)
+    
+    with col2:
+        st.subheader("Top startups - Year wise")
+
+        temp1 = df.drop_duplicates("startup",keep="first")
+        temp_df = temp1.groupby(["year","startup"])["amount"].sum().sort_values(ascending=False).reset_index()
+        final_df = temp_df.drop_duplicates(subset=["year"],keep="first").sort_values(by=["year"]).reset_index().drop("index",axis=1)
+        st.dataframe(final_df)
+
+        
+        
+        
