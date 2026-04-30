@@ -80,7 +80,6 @@ def load_investor_details(df,investor):
         st.subheader("YoY Investment")
         if len(year_series) < 2:
             st.warning("Not enough data for YoY trend")
-            st.write(year_series)
         else:
             fig2, ax2 = plt.subplots()
             ax2.plot(year_series.index,year_series.values) #type: ignore
