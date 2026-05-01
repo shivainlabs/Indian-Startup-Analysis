@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def load_overall_analysis(df):
@@ -96,6 +97,38 @@ def load_overall_analysis(df):
         for labels in ax1.get_xticklabels():
             labels.set_rotation(90)
         st.pyplot(fig1)
+    
+    with col2:
+        st.subheader("Types of Funding")
+        new_df = df["round"].value_counts().sort_values(ascending=False)
+        top_n = 10
+        top_rounds = new_df.head(top_n)
+        top_rounds["others"] = new_df.iloc[top_n:].sum()
+        fig,ax = plt.subplots()
+        ax.bar(top_rounds.index,top_rounds.values)
+        for labels in ax.get_xticklabels():
+            labels.set_rotation(90)
+        st.pyplot(fig)
         
+
+    
+    col1,col2 = st.columns(2)
+    with col1:
+        st.subheader("Heatmap - Year v/s Month ")
+        pt = pd.pivot_table(df,values=["amount"],index=["year"],columns=["month"],aggfunc="sum",fill_value=0)
+        fig, ax = plt.subplots(figsize=(10,5))        
+        sns.heatmap(pt, cmap="YlGnBu", annot=True, fmt=".0f", ax=ax)
+        ax.set_title("Funding Heatmap (Year vs Month)")
+        st.pyplot(fig)
         
+    with col2:
+        st.subheader("Heatmap - Top 10 Sectors v/s Year ")
+        top_sector = df.groupby("vertical")["amount"].sum().sort_values(ascending=False).head(10).index
+        new_df = df[df["vertical"].isin(top_sector)]
+        sectorYear_pt = pd.pivot_table(new_df,values=["amount"],columns=["year"],index=["vertical"],aggfunc="sum",fill_value=0)
+        fig,ax = plt.subplots(figsize=(10,5))
+        sns.heatmap(sectorYear_pt,annot=True,fmt='.0f',cmap="YlOrRd",ax=ax)
+        ax.set_title("Funding Heatmap (Sector vs Year)")
+        st.pyplot(fig)
+                
         

@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 from investor_details import load_investor_details
 from overall_details import load_overall_analysis
